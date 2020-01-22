@@ -4,7 +4,6 @@ static NSString *const kMessagesChannel = @"uni_links/messages";
 static NSString *const kEventsChannel = @"uni_links/events";
 
 @interface UniLinksPlugin () <FlutterStreamHandler>
-@property(nonatomic, copy) NSString *initialLink;
 @property(nonatomic, copy) NSString *latestLink;
 @end
 
@@ -50,8 +49,7 @@ static id _instance;
 - (BOOL)application:(UIApplication *)application
     didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
   NSURL *url = (NSURL *)launchOptions[UIApplicationLaunchOptionsURLKey];
-  self.initialLink = [url absoluteString];
-  self.latestLink = self.initialLink;
+  self.latestLink = [url absoluteString];
   return YES;
 }
 
@@ -59,9 +57,6 @@ static id _instance;
             openURL:(NSURL *)url
             options:(NSDictionary<UIApplicationOpenURLOptionsKey, id> *)options {
   self.latestLink = [url absoluteString];
-  if (!_eventSink) {
-      self.initialLink = self.latestLink;
-  }
   return YES;
 }
 
@@ -70,9 +65,6 @@ static id _instance;
       restorationHandler:(void (^)(NSArray *_Nullable))restorationHandler {
   if ([userActivity.activityType isEqualToString:NSUserActivityTypeBrowsingWeb]) {
     self.latestLink = [userActivity.webpageURL absoluteString];
-    if (!_eventSink) {
-      self.initialLink = self.latestLink;
-    }
     return YES;
   }
   return NO;
@@ -80,9 +72,7 @@ static id _instance;
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
   if ([@"getInitialLink" isEqualToString:call.method]) {
-    result(self.initialLink);
-    // } else if ([@"getLatestLink" isEqualToString:call.method]) {
-    //     result(self.latestLink);
+    result(self.latestLink);
   } else {
     result(FlutterMethodNotImplemented);
   }
