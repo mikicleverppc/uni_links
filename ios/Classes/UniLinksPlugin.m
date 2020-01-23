@@ -85,6 +85,9 @@ static id _instance;
 - (FlutterError *_Nullable)onListenWithArguments:(id _Nullable)arguments
                                        eventSink:(nonnull FlutterEventSink)eventSink {
   _eventSink = eventSink;
+  //Go ahead and send the link on listen if we have one
+  if (_eventSink && _latestLink) _eventSink(_latestLink);
+
   return nil;
 }
 
