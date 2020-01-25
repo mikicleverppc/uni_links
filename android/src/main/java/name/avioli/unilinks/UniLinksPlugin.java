@@ -3,6 +3,7 @@ package name.avioli.unilinks;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import io.flutter.plugin.common.EventChannel;
 import io.flutter.plugin.common.EventChannel.EventSink;
 import io.flutter.plugin.common.EventChannel.StreamHandler;
@@ -55,7 +56,7 @@ public class UniLinksPlugin
     String dataString = intent.getDataString();
 
     if (Intent.ACTION_VIEW.equals(action)) {
-      if (dataString) latestLink = dataString;
+      if (dataString != null) latestLink = dataString;
       if (changeReceiver != null) changeReceiver.onReceive(context, intent);
     }
   }
@@ -63,7 +64,7 @@ public class UniLinksPlugin
   @Override
   public void onMethodCall(MethodCall call, Result result) {
     if (call.method.equals("getInitialLink")) {
-      result.success(initialLink);
+      result.success(latestLink);
     } else {
       result.notImplemented();
     }
