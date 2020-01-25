@@ -25,7 +25,6 @@ public class UniLinksPlugin
   private BroadcastReceiver changeReceiver;
   private Registrar registrar;
 
-  private String initialLink;
   private String latestLink;
 
   /** Plugin registration. */
@@ -56,8 +55,7 @@ public class UniLinksPlugin
     String dataString = intent.getDataString();
 
     if (Intent.ACTION_VIEW.equals(action)) {
-      if (initial) initialLink = dataString;
-      latestLink = dataString;
+      if (dataString) latestLink = dataString;
       if (changeReceiver != null) changeReceiver.onReceive(context, intent);
     }
   }
@@ -66,8 +64,6 @@ public class UniLinksPlugin
   public void onMethodCall(MethodCall call, Result result) {
     if (call.method.equals("getInitialLink")) {
       result.success(initialLink);
-      // } else if (call.method.equals("getLatestLink")) {
-      //   result.success(latestLink);
     } else {
       result.notImplemented();
     }
@@ -76,13 +72,16 @@ public class UniLinksPlugin
   @Override
   public void onListen(Object arguments, EventSink events) {
     changeReceiver = createChangeReceiver(events);
-    // registrar.activity().registerReceiver(
-    // changeReceiver, new IntentFilter(Intent.ACTION_VIEW));
+    
+    //Go ahead and send the link on listen if we have one
+    if (latestLink != null && !latestLink.isEmpty()) {
+      Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(latestLink));
+      if (changeReceiver != null) changeReceiver.onReceive(registrar.context(), intent);
+    }
   }
 
   @Override
   public void onCancel(Object arguments) {
-    // registrar.activity().unregisterReceiver(changeReceiver);
     changeReceiver = null;
   }
 
