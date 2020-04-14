@@ -43,7 +43,10 @@ static id _instance;
   _latestLink = [latestLink copy];
   [self didChangeValueForKey:key];
 
-  if (_eventSink) _eventSink(_latestLink);
+  if (_eventSink) {
+    _eventSink(_latestLink);
+    _latestLink = nil;
+  }
 }
 
 - (BOOL)application:(UIApplication *)application

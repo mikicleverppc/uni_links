@@ -58,6 +58,7 @@ public class UniLinksPlugin
     if (Intent.ACTION_VIEW.equals(action)) {
       if (dataString != null) latestLink = dataString;
       if (changeReceiver != null) changeReceiver.onReceive(context, intent);
+      latestLink = null;
     }
   }
 
@@ -73,11 +74,12 @@ public class UniLinksPlugin
   @Override
   public void onListen(Object arguments, EventSink events) {
     changeReceiver = createChangeReceiver(events);
-    
+
     //Go ahead and send the link on listen if we have one
     if (latestLink != null && !latestLink.isEmpty()) {
       Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(latestLink));
       if (changeReceiver != null) changeReceiver.onReceive(registrar.context(), intent);
+      latestLink = null;
     }
   }
 
