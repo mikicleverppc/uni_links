@@ -96,6 +96,7 @@ static id _instance;
 
 - (FlutterError *_Nullable)onCancelWithArguments:(id _Nullable)arguments {
   _eventSink = nil;
+  _latestLink = nil;
   return nil;
 }
 
